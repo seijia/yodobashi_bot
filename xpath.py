@@ -7,7 +7,8 @@ import undetected_chromedriver.v2 as uc
 
 from webdriver_manager.chrome import ChromeDriverManager
 from plyer import notification
-import pickle, winsound
+import pickle
+import winsound
 
 
 home_page = "https://www.yodobashi.com/"
@@ -58,8 +59,6 @@ product_name_xpath = "./a[@class='js_productListPostTag js-clicklog js-clicklog_
 title = "/html/body/div[@id='wrapper']/div[@id='contents']/div[@class='contentsCol clearfix']/div[@class='mainCol']/div[@class='mainColInner']/div[@class='contentsHead js_legoPartsHeadline externalInputHeadline']/h1"
 store_status_xpath = "./div[@class='shopInfoUnit']/table/tbody/tr[@class='rowData rowDataFirst']/td[@class='stockArea']/span[@class='uiIconTxtS']/span[@class='green']"
 
-
-
 logger = logging.getLogger(__name__)
 
 
@@ -84,21 +83,22 @@ def start_chrome():
 
 def start_undetected_chrome():
     driver = uc.Chrome(use_subprocess=True)
-    try:
-        driver.get('https://www.yodobashi.com')
-        load_cookie(driver, "./cookie")
-        driver.implicitly_wait(10)
-    except:
-        pass
+
+    driver.get('https://www.yodobashi.com')
+    load_cookie(driver, "./cookie")
+    driver.implicitly_wait(10)
+
     return driver
 
 
 def close_webdriver(driver):
     driver.quit()
 
+
 def save_cookie(driver, path):
     with open(path, 'wb') as filehandler:
         pickle.dump(driver.get_cookies(), filehandler)
+
 
 def load_cookie(driver, path):
     with open(path, 'rb') as cookiesfile:
@@ -107,6 +107,8 @@ def load_cookie(driver, path):
             driver.add_cookie(cookie)
 
 # send windows popup notification
+
+
 def sed_notice(text, url, title):
     logger.warning(title + " " + text)
     logger.warning(url)

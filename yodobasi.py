@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from selenium import webdriver
-from selenium_stealth import stealth
 import time
 import os
 import copy
@@ -10,12 +8,14 @@ import config
 import xpath as xp
 from datetime import datetime
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import TimeoutException
 
 log_fmt = '%(levelname)s %(asctime)s: %(message)s'
 date_fmt = '%Y-%m-%d %H:%M:%S'
 log_file_name = "{}/log/yodobashi-{}.log".format(
     os.getcwd(), datetime.now().strftime("%Y-%m-%d"))
-handlers = [logging.FileHandler(log_file_name, encoding='utf-8'), logging.StreamHandler()]
+handlers = [logging.FileHandler(
+    log_file_name, encoding='utf-8'), logging.StreamHandler()]
 logging.basicConfig(level=logging.INFO,
                     format=log_fmt,
                     datefmt=date_fmt,
@@ -52,7 +52,7 @@ def add_to_cart(driver, buy_list):
     try:
         WebDriverWait(driver, 10).until(
             lambda d: d.find_element_by_xpath(xp.confirm_button))
-    except:
+    except TimeoutException:
         auto_login(driver)
         WebDriverWait(driver, 10).until(
             lambda d: d.find_element_by_xpath(xp.proceed_to_next_button))
@@ -73,14 +73,14 @@ def check_web(driver, t):
         text = " ".join(text)
         flags = [t in text for t in xp.over_text]
         if True not in flags:
-            xp.sed_notice(text, xp.base_url+t, t)
+            xp.sed_notice(text, xp.base_url + t, t)
             product_link = elem.find_element_by_xpath(
                 xp.page_link).get_attribute('href')
             stock_list.append((t, product_link))
         try:
             if check_local_store:
                 check_local_store_stock(driver, elem)
-        except:
+        except TimeoutException:
             pass
     return stock_list
 
